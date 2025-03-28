@@ -15,8 +15,8 @@ const STAKE_INPUT_SELECTOR = "#bet-stake-0";
 const SOCKET_URL = "http://13.213.28.84:8082";
 const MAX_RETRIES = 5;
 const RESTART_DELAY = 5000; // 5 seconds
-// const geckodriverPath = "/data/data/com.termux/files/usr/bin/geckodriver"; // Update path for Termux
-const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
+const geckodriverPath = "/data/data/com.termux/files/usr/bin/geckodriver"; // Update path for Termux
+//const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
 
 async function login(driver) {
   if (weburl === "https://cbtf4.com") {
