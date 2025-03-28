@@ -1,50 +1,53 @@
 const { Builder, By, until } = require("selenium-webdriver");
 const { io } = require("socket.io-client");
 const firefox = require("selenium-webdriver/firefox");
-require('dotenv').config()
+require("dotenv").config();
 
-const LOGIN_URL = "https://cbtf4.com";
+const weburl = process.env.WEB_URL;
 const STAKE_INPUT_SELECTOR = "#bet-stake-0";
 const SOCKET_URL = "http://13.213.28.84:8082";
 const MAX_RETRIES = 5;
 const RESTART_DELAY = 5000; // 5 seconds
-const geckodriverPath = "/data/data/com.termux/files/usr/bin/geckodriver"; // Update path for Termux
-// const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
+// const geckodriverPath = "/data/data/com.termux/files/usr/bin/geckodriver"; // Update path for Termux
+const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
 
 async function login(driver) {
   console.log("🔑 Logging in...");
-  await driver.get(LOGIN_URL);
+  await driver.get(weburl);
 
   console.log("✅ Page loaded successfully!");
-  await driver.findElement(By.css(".fa-sign-in")).click(); // Adjusted selector
-  await driver.findElement(By.className("fa-angle-down")).click();
-  await driver.findElement(By.className("fa-user")).click();
 
-  const usernameField = await driver.wait(
-    until.elementLocated(By.id("username")),
-    10000
-  );
-  await usernameField.sendKeys(`${process.env.USERNAME}`);
-
-  const userPassword = await driver.findElement(
-    By.css("input[placeholder='Password']")
-  );
-  await userPassword.sendKeys(`${process.env.PASSWORD}`);
-  const loginButton = await driver.wait(
-    until.elementLocated(By.css("button.loginBtn")),
-    10000
-  );
-  await loginButton.click();
   try {
-    let closeButton = await driver.findElement(By.className("closeBTN"));
-    if (closeButton) await closeButton.click();
-  } catch (err) {
-    console.log("No modal to close.");
+    await driver.findElement(By.css(".fa-sign-in")).click(); // Adjusted selector
+    await driver.findElement(By.className("fa-angle-down")).click();
+    await driver.findElement(By.className("fa-user")).click();
+
+    const usernameField = await driver.wait(
+      until.elementLocated(By.id("username")),
+      10000
+    );
+    await usernameField.sendKeys(`${process.env.USERNAME}`);
+
+    const userPassword = await driver.findElement(
+      By.css("input[placeholder='Password']")
+    );
+    await userPassword.sendKeys(`${process.env.PASSWORD}`);
+    const loginButton = await driver.wait(
+      until.elementLocated(By.css("button.loginBtn")),
+      10000
+    );
+    await loginButton.click();
+    console.log("✅ Logged in successfully!");
+    try {
+      let closeButton = await driver.findElement(By.className("closeBTN"));
+      if (closeButton) await closeButton.click();
+    } catch (err) {
+      console.log("No modal to close.");
+    }
+  } catch (error) {
+    console.error("❌ Error logging in:", error);
   }
-
-  console.log("✅ Logged in successfully!");
 }
-
 
 // async function placeBet(driver, data) {
 //   console.log("🎯 Placing bet for:", data);
@@ -102,7 +105,6 @@ async function login(driver) {
 //     console.error(`❌ Failed to place bet for event: ${data.eventName}`, error);
 //   }
 // }
-
 
 // async function placeBet(driver, data) {
 //   console.log("🎯 Placing bet for:", data);
@@ -173,27 +175,32 @@ async function login(driver) {
 //   }
 // }
 
-
 async function placeBet(driver, data) {
   console.log("🎯 Placing bet for:", data);
-  await driver.get(`https://cbtf4.com/sport/event-detail/${data.eventId}`);
+  await driver.get(`${weburl}/sport/event-detail/${data.eventId}`);
 
   try {
     // Wait for event row containing the runner name
     let eventRow = await driver.wait(
-      until.elementLocated(By.xpath(`//div[contains(text(), '${data.runnerName}')]//ancestor::tr`)),
+      until.elementLocated(
+        By.xpath(`//div[contains(text(), '${data.runnerName}')]//ancestor::tr`)
+      ),
       10000
     );
 
     let oddsElement;
 
-    if (data.betType === 'back') {
-      let allBackOdds = await eventRow.findElements(By.xpath(`.//td[contains(@class, 'back')]//strong`));
+    if (data.betType === "back") {
+      let allBackOdds = await eventRow.findElements(
+        By.xpath(`.//td[contains(@class, 'back')]//strong`)
+      );
       if (allBackOdds.length > 0) {
         oddsElement = allBackOdds[allBackOdds.length - 1];
       }
-    } else if (data.betType === 'lay') {
-      let allLayOdds = await eventRow.findElements(By.xpath(`.//td[contains(@class, 'lay')]//strong`));
+    } else if (data.betType === "lay") {
+      let allLayOdds = await eventRow.findElements(
+        By.xpath(`.//td[contains(@class, 'lay')]//strong`)
+      );
       if (allLayOdds.length > 0) {
         oddsElement = allLayOdds[0];
       }
@@ -204,29 +211,39 @@ async function placeBet(driver, data) {
 
       await driver.wait(until.elementLocated(By.css(".apl-form")), 5000);
 
-      let oddsInput = await driver.findElement(By.css(".odds-field input[type='text']"));
+      let oddsInput = await driver.findElement(
+        By.css(".odds-field input[type='text']")
+      );
       await oddsInput.clear();
       await oddsInput.sendKeys(data.odds.toString());
 
-      let stakeInput = await driver.findElement(By.css(".betslip__input input[type='number']"));
+      let stakeInput = await driver.findElement(
+        By.css(".betslip__input input[type='number']")
+      );
       await stakeInput.clear();
       await stakeInput.sendKeys(data.stake.toString());
 
       // Locate and uncheck the confirmation checkbox (if it exists)
-      let confirmCheckbox = await driver.findElements(By.xpath("//label[contains(text(), 'Confirm Bet')]/input"));
+      let confirmCheckbox = await driver.findElements(
+        By.xpath("//label[contains(text(), 'Confirm Bet')]/input")
+      );
       if (confirmCheckbox.length > 0) {
         // Uncheck the checkbox if it's checked
         let isChecked = await confirmCheckbox[0].isSelected();
         if (isChecked) {
-          await confirmCheckbox[0].click();  // Uncheck the checkbox
-          console.log("🔘 Unchecked the 'Confirm Bet' checkbox to skip confirmation.");
+          await confirmCheckbox[0].click(); // Uncheck the checkbox
+          console.log(
+            "🔘 Unchecked the 'Confirm Bet' checkbox to skip confirmation."
+          );
         }
       } else {
         console.log("⚠️ No confirmation checkbox found.");
       }
 
       // Click on the 'Place Bet' button directly (no confirmation popup)
-      let placeBetButton = await driver.findElement(By.xpath("//button[contains(text(), 'Place Bet')]"));
+      let placeBetButton = await driver.findElement(
+        By.xpath("//button[contains(text(), 'Place Bet')]")
+      );
       await placeBetButton.click();
 
       console.log(`✅ Bet placed successfully for event: ${data.eventName}`);
@@ -237,8 +254,6 @@ async function placeBet(driver, data) {
     console.error(`❌ Failed to place bet for event: ${data.eventName}`, error);
   }
 }
-
-
 
 async function startScript(retries = 0) {
   console.log("🚀 Starting Selenium script...");
