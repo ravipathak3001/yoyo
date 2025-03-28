@@ -252,90 +252,90 @@ async function login(driver) {
   }
 }
 
-async function placeBet(driver, data) {
-  console.log("🎯 Placing bet for:", data);
-  await driver.get(`https://cbtf4.com/sport/event-detail/${data.eventId}`);
+// async function placeBet(driver, data) {
+//   console.log("🎯 Placing bet for:", data);
+//   await driver.get(`https://cbtf4.com/sport/event-detail/${data.eventId}`);
 
-  try {
-    // Wait for event row containing the runner name
-    let eventRow = await driver.wait(
-      until.elementLocated(
-        By.xpath(`//div[contains(text(), '${data.runnerName}')]//ancestor::tr`)
-      ),
-      10000
-    );
+//   try {
+//     // Wait for event row containing the runner name
+//     let eventRow = await driver.wait(
+//       until.elementLocated(
+//         By.xpath(`//div[contains(text(), '${data.runnerName}')]//ancestor::tr`)
+//       ),
+//       10000
+//     );
 
-    let oddsElement;
+//     let oddsElement;
 
-    if (data.betType === "back") {
-      let allBackOdds = await eventRow.findElements(
-        By.xpath(`.//td[contains(@class, 'back')]//strong`)
-      );
-      if (allBackOdds.length > 0) {
-        oddsElement = allBackOdds[allBackOdds.length - 1];
-      }
-    } else if (data.betType === "lay") {
-      let allLayOdds = await eventRow.findElements(
-        By.xpath(`.//td[contains(@class, 'lay')]//strong`)
-      );
-      if (allLayOdds.length > 0) {
-        oddsElement = allLayOdds[0];
-      }
-    }
+//     if (data.betType === "back") {
+//       let allBackOdds = await eventRow.findElements(
+//         By.xpath(`.//td[contains(@class, 'back')]//strong`)
+//       );
+//       if (allBackOdds.length > 0) {
+//         oddsElement = allBackOdds[allBackOdds.length - 1];
+//       }
+//     } else if (data.betType === "lay") {
+//       let allLayOdds = await eventRow.findElements(
+//         By.xpath(`.//td[contains(@class, 'lay')]//strong`)
+//       );
+//       if (allLayOdds.length > 0) {
+//         oddsElement = allLayOdds[0];
+//       }
+//     }
 
-    if (oddsElement) {
-      await oddsElement.click();
+//     if (oddsElement) {
+//       await oddsElement.click();
 
-      await driver.wait(until.elementLocated(By.css(".apl-form")), 5000);
+//       await driver.wait(until.elementLocated(By.css(".apl-form")), 5000);
 
-      let oddsInput = await driver.findElement(
-        By.css(".odds-field input[type='text']")
-      );
-      await oddsInput.clear();
-      await oddsInput.sendKeys(data.odds.toString());
+//       let oddsInput = await driver.findElement(
+//         By.css(".odds-field input[type='text']")
+//       );
+//       await oddsInput.clear();
+//       await oddsInput.sendKeys(data.odds.toString());
 
-      let stakeInput = await driver.findElement(
-        By.css(".betslip__input input[type='number']")
-      );
-      await stakeInput.clear();
-      await stakeInput.sendKeys(data.stake.toString());
+//       let stakeInput = await driver.findElement(
+//         By.css(".betslip__input input[type='number']")
+//       );
+//       await stakeInput.clear();
+//       await stakeInput.sendKeys(data.stake.toString());
 
-      let confirmCheckbox = await driver.findElements(
-        By.xpath("//label[contains(@class, 'confirmation-checkbox')]/input")
-      );
-      if (confirmCheckbox.length > 0) {
-        await confirmCheckbox[0].click();
-      }
+//       let confirmCheckbox = await driver.findElements(
+//         By.xpath("//label[contains(@class, 'confirmation-checkbox')]/input")
+//       );
+//       if (confirmCheckbox.length > 0) {
+//         await confirmCheckbox[0].click();
+//       }
 
-      let placeBetButton = await driver.findElement(
-        By.xpath("//button[contains(text(), 'Place Bet')]")
-      );
-      await placeBetButton.click();
+//       let placeBetButton = await driver.findElement(
+//         By.xpath("//button[contains(text(), 'Place Bet')]")
+//       );
+//       await placeBetButton.click();
 
-      // ✅ Handle optional confirmation modal
-      try {
-        let confirmButton = await driver.wait(
-          until.elementLocated(
-            By.xpath("//button[contains(text(), 'Confirm')]")
-          ),
-          3000 // Wait only 3 seconds, if not found, skip
-        );
-        if (confirmButton) {
-          await confirmButton.click();
-          console.log(`✅ Confirmed the bet.`);
-        }
-      } catch (error) {
-        console.log(`⚠️ No confirmation popup detected, bet placed directly.`);
-      }
+//       // ✅ Handle optional confirmation modal
+//       try {
+//         let confirmButton = await driver.wait(
+//           until.elementLocated(
+//             By.xpath("//button[contains(text(), 'Confirm')]")
+//           ),
+//           3000 // Wait only 3 seconds, if not found, skip
+//         );
+//         if (confirmButton) {
+//           await confirmButton.click();
+//           console.log(`✅ Confirmed the bet.`);
+//         }
+//       } catch (error) {
+//         console.log(`⚠️ No confirmation popup detected, bet placed directly.`);
+//       }
 
-      console.log(`✅ Bet placed successfully for event: ${data.eventName}`);
-    } else {
-      console.log(`⚠️ No valid odds found to click.`);
-    }
-  } catch (error) {
-    console.error(`❌ Failed to place bet for event: ${data.eventName}`, error);
-  }
-}
+//       console.log(`✅ Bet placed successfully for event: ${data.eventName}`);
+//     } else {
+//       console.log(`⚠️ No valid odds found to click.`);
+//     }
+//   } catch (error) {
+//     console.error(`❌ Failed to place bet for event: ${data.eventName}`, error);
+//   }
+// }
 
 async function placeBet(driver, data) {
   console.log("🎯 Placing bet for:", data);
