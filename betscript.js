@@ -16,7 +16,7 @@ const SOCKET_URL = "http://13.213.28.84:8082";
 const MAX_RETRIES = 5;
 const RESTART_DELAY = 5000; // 5 seconds
 const geckodriverPath = "/data/data/com.termux/files/usr/bin/geckodriver"; // Update path for Termux
-//const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
+// const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
 
 async function login(driver) {
   if (weburl === "https://cbtf4.com") {
@@ -337,12 +337,91 @@ async function login(driver) {
 //   }
 // }
 
+// async function placeBet(driver, data) {
+//   console.log("🎯 Placing bet for:", data);
+//   await driver.get(`${weburl}/sport/event-detail/${data.eventId}`);
+
+//   try {
+//     // Wait for event row containing the runner name
+//     let eventRow = await driver.wait(
+//       until.elementLocated(
+//         By.xpath(`//div[contains(text(), '${data.runnerName}')]//ancestor::tr`)
+//       ),
+//       10000
+//     );
+
+//     let oddsElement;
+
+//     if (data.betType === "back") {
+//       let allBackOdds = await eventRow.findElements(
+//         By.xpath(`.//td[contains(@class, 'back')]//strong`)
+//       );
+//       if (allBackOdds.length > 0) {
+//         oddsElement = allBackOdds[allBackOdds.length - 1];
+//       }
+//     } else if (data.betType === "lay") {
+//       let allLayOdds = await eventRow.findElements(
+//         By.xpath(`.//td[contains(@class, 'lay')]//strong`)
+//       );
+//       if (allLayOdds.length > 0) {
+//         oddsElement = allLayOdds[0];
+//       }
+//     }
+
+//     if (oddsElement) {
+//       await oddsElement.click();
+
+//       await driver.wait(until.elementLocated(By.css(".apl-form")), 5000);
+
+//       let oddsInput = await driver.findElement(
+//         By.css(".odds-field input[type='text']")
+//       );
+//       await oddsInput.clear();
+//       await oddsInput.sendKeys(data.odds.toString());
+
+//       let stakeInput = await driver.findElement(
+//         By.css(".betslip__input input[type='number']")
+//       );
+//       await stakeInput.clear();
+//       await stakeInput.sendKeys(data.stake.toString());
+
+//       // Locate and uncheck the confirmation checkbox (if it exists)
+//       let confirmCheckbox = await driver.findElements(
+//         By.xpath("//label[contains(text(), 'Confirm Bet')]/input")
+//       );
+//       if (confirmCheckbox.length > 0) {
+//         // Uncheck the checkbox if it's checked
+//         let isChecked = await confirmCheckbox[0].isSelected();
+//         if (isChecked) {
+//           await confirmCheckbox[0].click(); // Uncheck the checkbox
+//           console.log(
+//             "🔘 Unchecked the 'Confirm Bet' checkbox to skip confirmation."
+//           );
+//         }
+//       } else {
+//         console.log("⚠️ No confirmation checkbox found.");
+//       }
+
+//       // Click on the 'Place Bet' button directly (no confirmation popup)
+//       let placeBetButton = await driver.findElement(
+//         By.xpath("//button[contains(text(), 'Place Bet')]")
+//       );
+//       await placeBetButton.click();
+
+//       console.log(`✅ Bet placed successfully for event: ${data.eventName}`);
+//     } else {
+//       console.log(`⚠️ No valid odds found to click.`);
+//     }
+//   } catch (error) {
+//     console.error(`❌ Failed to place bet for event: ${data.eventName}`, error);
+//   }
+// }
+
 async function placeBet(driver, data) {
   console.log("🎯 Placing bet for:", data);
-  await driver.get(`${weburl}/sport/event-detail/${data.eventId}`);
 
   try {
-    // Wait for event row containing the runner name
+    // Directly find the event row containing the runner name
     let eventRow = await driver.wait(
       until.elementLocated(
         By.xpath(`//div[contains(text(), '${data.runnerName}')]//ancestor::tr`)
@@ -390,7 +469,6 @@ async function placeBet(driver, data) {
         By.xpath("//label[contains(text(), 'Confirm Bet')]/input")
       );
       if (confirmCheckbox.length > 0) {
-        // Uncheck the checkbox if it's checked
         let isChecked = await confirmCheckbox[0].isSelected();
         if (isChecked) {
           await confirmCheckbox[0].click(); // Uncheck the checkbox
@@ -416,6 +494,7 @@ async function placeBet(driver, data) {
     console.error(`❌ Failed to place bet for event: ${data.eventName}`, error);
   }
 }
+
 
 async function startScript(retries = 0) {
   console.log("🚀 Starting Selenium script...");
