@@ -16,7 +16,7 @@ const SOCKET_URL = "http://13.213.28.84:8082";
 const MAX_RETRIES = 5;
 const RESTART_DELAY = 5000; // 5 seconds
 const geckodriverPath = "/data/data/com.termux/files/usr/bin/geckodriver"; // Update path for Termux
-// const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
+//const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
 
 async function login(driver) {
   if (weburl === "https://cbtf4.com") {
@@ -570,7 +570,7 @@ async function placeBetSection_11Team(driver, data) {
       await driver.get(urlToReach);
       await driver.wait(
         () => driver.getCurrentUrl().then((url) => url.includes(urlToReach)),
-        15000
+        2000
       );
       console.log("✅ Betting page loaded.");
     }
@@ -588,7 +588,7 @@ async function placeBetSection_11Team(driver, data) {
           `//h3[contains(text(), '${data.runnerName}')]/ancestor::div[contains(@class, 'oddsList')]`
         )
       ),
-      5000
+      200
     );
 
     let oddsElement;
@@ -608,7 +608,7 @@ async function placeBetSection_11Team(driver, data) {
     if (oddsElement) {
       await oddsElement.click();
       console.log("✅ Odds clicked, waiting for bet slip...");
-      await driver.wait(until.elementLocated(By.css(".bet-slip")), 2000);
+      await driver.wait(until.elementLocated(By.css(".bet-slip")), 200);
       console.log("✅ Bet slip loaded.");
 
       // 🔹 Enter custom odds
