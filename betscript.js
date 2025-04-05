@@ -16,7 +16,7 @@ const SOCKET_URL = "http://13.213.28.84:8082";
 const MAX_RETRIES = 5;
 const RESTART_DELAY = 5000; // 5 seconds
 const geckodriverPath = "/data/data/com.termux/files/usr/bin/geckodriver"; // Update path for Termux
-// const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
+//const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
 
 async function login(driver) {
   if (weburl === "https://cbtf4.com") {
@@ -638,9 +638,9 @@ async function placeBetSection_11Team(driver, data) {
     }
   } catch (error) {
     console.error(`❌ Failed to place bet for event: ${data.eventName}`, error);
-    await driver.takeScreenshot().then((data) => {
-      require("fs").writeFileSync("debug_screenshot.png", data, "base64");
-    });
+    // await driver.takeScreenshot().then((data) => {
+    //   require("fs").writeFileSync("debug_screenshot.png", data, "base64");
+    // });
   }
 }
 
