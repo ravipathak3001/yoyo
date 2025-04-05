@@ -576,10 +576,10 @@ async function placeBetSection_11Team(driver, data) {
     }
 
     // ✅ Scroll down to load elements dynamically
-    await driver.executeScript(
-      "window.scrollTo(0, document.body.scrollHeight)"
-    );
-    await driver.sleep(2000); // Wait for elements to load
+    // await driver.executeScript(
+    //   "window.scrollTo(0, document.body.scrollHeight)"
+    // );
+    // await driver.sleep(2000); // Wait for elements to load
 
     // ✅ Locate event row by team name
     let eventRow = await driver.wait(
@@ -588,7 +588,7 @@ async function placeBetSection_11Team(driver, data) {
           `//h3[contains(text(), '${data.runnerName}')]/ancestor::div[contains(@class, 'oddsList')]`
         )
       ),
-      15000
+      5000
     );
 
     let oddsElement;
@@ -608,7 +608,7 @@ async function placeBetSection_11Team(driver, data) {
     if (oddsElement) {
       await oddsElement.click();
       console.log("✅ Odds clicked, waiting for bet slip...");
-      await driver.wait(until.elementLocated(By.css(".bet-slip")), 5000);
+      await driver.wait(until.elementLocated(By.css(".bet-slip")), 2000);
       console.log("✅ Bet slip loaded.");
 
       // 🔹 Enter custom odds
