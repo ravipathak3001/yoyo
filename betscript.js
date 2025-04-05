@@ -15,8 +15,8 @@ const STAKE_INPUT_SELECTOR = "#bet-stake-0";
 const SOCKET_URL = "http://13.213.28.84:8082";
 const MAX_RETRIES = 5;
 const RESTART_DELAY = 5000; // 5 seconds
-const geckodriverPath = "/data/data/com.termux/files/usr/bin/geckodriver"; // Update path for Termux
-// const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
+//  const geckodriverPath = "/data/data/com.termux/files/usr/bin/geckodriver"; // Update path for Termux
+const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
 
 async function login(driver) {
   if (weburl === "https://cbtf4.com") {
@@ -560,7 +560,7 @@ async function placeBet(driver, data) {
 
 async function placeBetSection_11Team(driver, data) {
   console.log("🎯 Placing bet for:", data);
-  console.time("Bet Placement Time");
+
   try {
     let currentUrl = await driver.getCurrentUrl();
     let urlToReach = `${weburl}/sport/event-detail/${data.eventId}`;
@@ -588,7 +588,7 @@ async function placeBetSection_11Team(driver, data) {
           `//h3[contains(text(), '${data.runnerName}')]/ancestor::div[contains(@class, 'oddsList')]`
         )
       ),
-      200
+      1000
     );
 
     let oddsElement;
@@ -608,7 +608,7 @@ async function placeBetSection_11Team(driver, data) {
     if (oddsElement) {
       await oddsElement.click();
       console.log("✅ Odds clicked, waiting for bet slip...");
-      await driver.wait(until.elementLocated(By.css(".bet-slip")), 200);
+      await driver.wait(until.elementLocated(By.css(".bet-slip")), 1000);
       console.log("✅ Bet slip loaded.");
 
       // 🔹 Enter custom odds
@@ -642,7 +642,6 @@ async function placeBetSection_11Team(driver, data) {
       require("fs").writeFileSync("debug_screenshot.png", data, "base64");
     });
   }
-  console.timeEnd("Bet Placement Time");
 }
 
 async function placeBetSection_otsgameplay(driver, data) {
@@ -795,7 +794,6 @@ async function startScript(retries = 0) {
 
     socket.on("new-payload", async (data) => {
       console.log("📩 WebSocket message received:", data);
-      console.time("Bet Processing Time started");
       try {
         if (data.runnerName && data.odds && data.stake) {
           // await placeBetSection_Ice777(driver, data);
@@ -837,7 +835,6 @@ async function startScript(retries = 0) {
     //   console.log("❌ Max retries reached. Exiting.");
     // }
   }
-  console.timeEnd("Bet Processing Time started");
 }
 
 startScript();
