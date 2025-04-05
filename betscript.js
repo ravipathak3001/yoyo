@@ -795,9 +795,10 @@ async function startScript(retries = 0) {
 
     socket.on("new-payload", async (data) => {
       console.log("📩 WebSocket message received:", data);
+      console.time("Bet Processing Time started");
       try {
         if (data.runnerName && data.odds && data.stake) {
-          await placeBetSection_Ice777(driver, data);
+          // await placeBetSection_Ice777(driver, data);
 
           if (
             weburl === "https://gocric247.com" ||
@@ -836,6 +837,7 @@ async function startScript(retries = 0) {
     //   console.log("❌ Max retries reached. Exiting.");
     // }
   }
+  console.timeEnd("Bet Processing Time started");
 }
 
 startScript();
