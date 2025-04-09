@@ -12,11 +12,11 @@ function removeTrailingSlash(url) {
 
 const weburl = removeTrailingSlash(process.env.WEB_URL);
 const STAKE_INPUT_SELECTOR = "#bet-stake-0";
-const SOCKET_URL = "http://13.213.28.84:8082";
+const SOCKET_URL = "https://andro.chipsncrypt.com/";
 const MAX_RETRIES = 5;
 const RESTART_DELAY = 5000; // 5 seconds
 const geckodriverPath = "/data/data/com.termux/files/usr/bin/geckodriver"; // Update path for Termux
-//const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
+// const geckodriverPath = "/opt/homebrew/opt/geckodriver/bin/geckodriver"; // Update path for Linux
 
 async function login(driver) {
   if (weburl === "https://cbtf4.com") {
@@ -772,8 +772,8 @@ async function startScript(retries = 0) {
       weburl === "https://yolo365.com" ||
       weburl === "https://tnbook247.com" ||
       weburl === "https://r7win.com" ||
-      weburl === "https://d3.bajrangi365.com" ||
-      weburl === "https://d3.patel247.com" ||
+      //weburl === "https://d3.bajrangi365.com" ||
+      //weburl === "https://d3.patel247.com" ||
       weburl === "https://ostgameplay.com"
     ) {
       loginAnother_11Team(driver);
@@ -792,7 +792,7 @@ async function startScript(retries = 0) {
       console.error("❌ WebSocket error:", err)
     );
 
-    socket.on("new-payload", async (data) => {
+    socket.on("android_response", async (data) => {
       console.log("📩 WebSocket message received:", data);
       try {
         if (data.runnerName && data.odds && data.stake) {
@@ -807,8 +807,8 @@ async function startScript(retries = 0) {
             weburl === "https://yolo365.com" ||
             weburl === "https://tnbook247.com" ||
             weburl === "https://r7win.com" ||
-            weburl === "https://d3.bajrangi365.com" ||
-            weburl === "https://d3.patel247.com" ||
+            // weburl === "https://d3.bajrangi365.com" ||
+            // weburl === "https://d3.patel247.com" ||
             weburl === "https://ostgameplay.com"
           ) {
             placeBetSection_11Team(driver, data);
